@@ -25,6 +25,7 @@ cuda = True if torch.cuda.is_available() else False
 FloatTensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
 #Workers
+#When increase the workers it gave error DataLoader worker (pid(s) 15072, 2476, 14112, 21260, 7760, 14780, 12500, 20028) exited unexpectedly like this.
 workers = 0
 #Parameters
 batch_size = 256
