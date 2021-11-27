@@ -89,6 +89,7 @@ iters = 0
 
 print("Starting Training Loop")
 #TODO
+#real_cpu = data[0].to(device) - KeyError: 0
 for epoch in range(num_epochs):
     for i, data in enumerate(dataloader, 0):
         #Train with all-real batch
