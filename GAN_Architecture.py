@@ -36,8 +36,7 @@ class Generator(nn.Module):
             nn.ReLU()
             
             )
-    def forward(self, noise, energy):
-        input = self.conv1(noise * energy)
+    def forward(self, input):
         return self.main_conv(input)
     
 
@@ -65,17 +64,8 @@ class Discriminator(nn.Module):
                 nn.Conv3d(ndf*8, ndf*16, 3, 2, 1, bias= False)
                 
             )
-        self.fc = nn.Sequential(
-                nn.Linear(ndf*8 +1,ndf*4),
-                nn.LeakyReLU(0.2, inplace=True),
-                
-                nn.Linear(ndf*4,1),
-                nn.Sigmoid()
-                )
-    def forward(self, ray ,energy):
-        conv_out = self.main_conv(ray)
-        fc_input = torch.cat((conv_out, energy), 1).view(-1,ndf*4 +1)
-        return self.fc(fc_input)
+    def forward(self, input):
+        return self.main_conv(input)
 
 def weights_init(m):
     classname = m.__class__.__name__
