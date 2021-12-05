@@ -47,19 +47,19 @@ class Discriminator(nn.Module):
                 nn.Conv3d(3, ndf, 4, 2, 1, bias = False),
                 nn.LeakyReLU(0.2, inplace=True),
                 
-                nn.Conv3d(ndf, ndf*2, 3, 2, 1, bias= False),
+                nn.Conv3d(ndf, ndf*2, 4, 2, 1, bias= False),
                 nn.BatchNorm3d(ndf*2),
                 nn.LeakyReLU(0.2,inplace=True),
                 
-                nn.Conv3d(ndf*2, ndf*4, 3, 2, 1, bias= False),
+                nn.Conv3d(ndf*2, ndf*4, 4, 2, 1, bias= False),
                 nn.BatchNorm3d(ndf*4),
                 nn.LeakyReLU(0.2, inplace=True),
                 
-                nn.Conv3d(ndf*4, ndf*8, 3, 2, 1, bias= False),
+                nn.Conv3d(ndf*4, ndf*8, 4, 2, 1, bias= False),
                 nn.BatchNorm3d(ndf *8 ),
                 nn.LeakyReLU(0.2, inplace = True),
                 
-                nn.Conv3d(ndf*8, 1, 3, 1, 0, bias = False),
+                nn.Conv3d(ndf*8, 1, 4, 1, 0, bias = False),
                 nn.Sigmoid()
               
                 
