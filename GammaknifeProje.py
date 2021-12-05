@@ -16,7 +16,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from IPython.display import HTML
-import HDF5Dataset as H
 import GAN_Architecture as GAN
 import sys
 ngpu = 1
@@ -45,7 +44,10 @@ PATH_chechpoint = 'Save_model/new2_1.pth'
 #Dataset
 #Gammaknife is the group name
 datapath = "Traindata.h5"
-dataset = H.HDF5Dataset(datapath, 'Gammaknife')
+with h5py.File(datapath, "r") as f:
+    # Get the data
+    data = f['Gammaknife/energy']
+    dataset = np.array(data)
 #Create the dataLoader
 dataloader = torch.utils.data.DataLoader(dataset, batch_size = batch_size, 
                                          shuffle=True, num_workers= workers)
