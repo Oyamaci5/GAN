@@ -61,7 +61,7 @@ class Discriminator(nn.Module):
                 nn.BatchNorm3d(ndf*8),
                 nn.LeakyReLU(0.2, inplace=True),
                 
-                nn.Conv3d(ndf*8, ndf*16, 3, 2, 1, bias= False)
+                nn.Conv3d(ndf*8, 1, 3, 2, 1, bias= False)
                 
             )
     def forward(self, input):
