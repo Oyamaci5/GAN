@@ -48,6 +48,8 @@ with h5py.File(datapath, "r") as f:
     # Get the data
     data = f['Gammaknife/energy']
     dataset = np.array(data)
+
+dataset = torch.tensor(dataset)
 #Create the dataLoader
 dataloader = torch.utils.data.DataLoader(dataset, batch_size = batch_size, 
                                          shuffle=True, num_workers= workers)
