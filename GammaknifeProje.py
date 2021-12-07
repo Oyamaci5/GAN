@@ -18,15 +18,16 @@ import matplotlib.animation as animation
 from IPython.display import HTML
 import GAN_Architecture as GAN
 import sys
+from torch.autograd.variable import Variable
 ngpu = 1
 #Cuda check
 cuda = True if torch.cuda.is_available() else False
 FloatTensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
 #Workers
-workers = 8
+workers = 2
 #Parameters
-batch_size = 256
+batch_size = 32
 feature_size = 90
 nz = 100
 #Number of channels 
@@ -99,7 +100,7 @@ for epoch in range(num_epochs):
         #Train with all-real batch
         NetD.zero_grad()
         
-        real_cpu = data[0].to(device)
+        real_cpu = data.to(device)
         b_size = real_cpu.size(0)
         label = torch.full((b_size,), real_label, dtype= torch.float,
                            device = device)
