@@ -78,7 +78,7 @@ print(NetD)
 #Initialize BCELoss(Binary Cross Entropy Loss) function
 criterion = nn.BCELoss()
 
-fixed_noise = torch.randn(128,nz, 1, 1, device = device)
+fixed_noise = torch.randn(batch_size,nz, 1, 1, 1, device = device)
 real_label = 1.
 fake_label = 0.
 
