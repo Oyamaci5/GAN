@@ -43,7 +43,7 @@ PATH_save = 'Save_model/conv3d_corr_new2.pth'
 PATH_chechpoint = 'Save_model/new2_1.pth'
 #Dataset
 #Gammaknife is the group name
-datapath = "Traindata.h5"
+datapath = "Traind_onlyMeV.h5"
 with h5py.File(datapath, "r") as f:
     # Get the data
     data = f['Gammaknife/energy']
@@ -53,6 +53,7 @@ dataset = torch.tensor(dataset)
 #Create the dataLoader
 dataloader = torch.utils.data.DataLoader(dataset, batch_size = batch_size, 
                                          shuffle=True, num_workers= workers)
+#datset.shape -> torch.Size([199, 90, 90, 90])
 #Decide which device (GPU)
 device = torch.device("cuda:0" if(torch.cuda.is_available() and ngpu>0) else "cpu")
 
