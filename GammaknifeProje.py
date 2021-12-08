@@ -101,10 +101,14 @@ for epoch in range(num_epochs):
         #Train with all-real batch
         NetD.zero_grad()
         
+         btch_sz = len(data[0]) 
+        # Adversarial ground truths
         real_cpu = data.to(device)
-        b_size = real_cpu.size(0)
-        label = torch.full((b_size,), real_label, dtype= torch.float,
-                           device = device)
+        real_cpu = real_cpu.unsqueeze(1)
+        
+        real_label = Variable(FloatTensor(btch_sz).fill_(1.0), requires_grad=False)
+        fake_label = Variable(FloatTensor(btch_sz).fill_(0.0), requires_grad=False)
+        
         
         output = NetD(real_cpu).view(-1)
         errD_real = criterion(output, label)
