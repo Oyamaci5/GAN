@@ -15,6 +15,7 @@ import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from torch.autograd.variable import Variable
 from IPython.display import HTML
 import GAN_Architecture as GAN
 import sys
