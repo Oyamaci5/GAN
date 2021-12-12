@@ -50,9 +50,9 @@ with h5py.File(datapath, "r") as f:
     data = f['Gammaknife/energy']
     dataset = np.array(data)
 
-dataset = torch.tensor(dataset)
+dataset1 = torch.tensor(dataset)
 #Create the dataLoader
-dataloader = torch.utils.data.DataLoader(dataset, batch_size = batch_size, 
+dataloader = torch.utils.data.DataLoader(dataset1, batch_size = batch_size, 
                                          shuffle=True, num_workers= workers)
 #datset.shape -> torch.Size([199, 90, 90, 90])
 #Decide which device (GPU)
@@ -92,41 +92,47 @@ optimizerG = optim.Adam(NetG.parameters(), lr = lr ,betas=(beta1, 0.999))
 feature_list = []
 G_losses = []
 D_losses = []
-iters = 0
+
 
 print("Starting Training Loop")
 #TODO
 #real_cpu = data[0].to(device) - KeyError: 0
+iters = 0
 for epoch in range(num_epochs):
-    for i, data in enumerate(dataloader, 0):
+    for i, data in enumerate(dataloader,0):
         #Train with all-real batch
         NetD.zero_grad()
-        
-        btch_sz = len(data) 
         # Adversarial ground truths
         real_cpu = data.to(device)
+        b_size = real_cpu.size(0)
         real_cpu = real_cpu.unsqueeze(1)
-        
-        real_label = Variable(FloatTensor(btch_sz*1024).fill_(1.0), requires_grad=False)
-        fake_label = Variable(FloatTensor(btch_sz*1024).fill_(0.0), requires_grad=False)
-        
-        
+        valid_label = Variable(FloatTensor(b_size).fill_(1.0), requires_grad=False)
+        fake_label = Variable(FloatTensor(b_size).fill_(0.0), requires_grad=False)
+       #Train Discriminator
+    
+        NetD.zero_grad()
+      
         output = NetD(real_cpu).view(-1)
-        errD_real = criterion(output, label)
+
+       
+        errD_real = criterion(output,valid_label)
         #Calculate gradients
         errD_real.backward()
         D_x = output.mean().item()
         
         #Generate batch of latent vectors
-        noise = torch.randn(b_size, nz, 1, 1, device =device)
+        noise = torch.cuda.FloatTensor(b_size, nz, 1, 1, 1, device =device)
         #Generate fake image batch with G
-        fake = NetG(noise)
-        label.fill_(fake_label)
+        genlabel = np.random.uniform(10, 100, b_size)
+        genlabel = Variable(FloatTensor(genlabel))
+        genlabel = genlabel.view(btch_sz, 1, 1, 1, 1)
+        fake = NetG(noise.to(device), genlabel)
+        #label.fill_(fake_label)
         #Classify all fake batch with D
-        output = NetD(fake.detach()).view(-1)
+        output = NetD(fake, genlabel).view(-1)
         #Calculate D's loss on the all fake batch
-        errD_fake = criterion(output, label)
-        errD_fake.backward()
+        errD_fake = criterion(output, fake_label)
+        errD_fake.backward(retain_graph=True)
         D_G_z1 = output.mean().item()
         
         #Compute error of D as sum over the fake and real batches
@@ -136,12 +142,12 @@ for epoch in range(num_epochs):
         
         #Update G
         NetG.zero_grad()
-        label.fill_(real_label)
-        output = NetD(fake).view(-1)
+        #label.fill_(fake_label)
+        output = NetD(fake, genlabel).view(-1)
         #Calculate G loss
-        errG = criterion(output, label)
+        errG = criterion(output, fake_label)
         #Calculate gradients for G
-        errG.backward()
+        errG.backward(retain_graph=True)
         D_G_z2 = output.mean().item()
         #Update G
         optimizerG.step()
@@ -151,8 +157,8 @@ for epoch in range(num_epochs):
         D_losses.append(errD.item())
         
         if (iters % 100 == 0) or ((epoch == num_epochs -1) and i == len(dataloader-1)):
-                        with torch.no_grad():
-                            fake = NetG(fixed_noise).detach().cpu()
-                        feature_list.append(vutils.make_grid(fake, padding = 2, normalize = True))
+                with torch.no_grad():
+                    fake = NetG(fixed_noise, label).detach().cpu()
+                feature_list.append(vutils.make_grid(fake, padding = 1, normalize = True))
         
         iters += 1
