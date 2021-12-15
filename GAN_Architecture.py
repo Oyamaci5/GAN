@@ -63,22 +63,11 @@ class Discriminator(nn.Module):
                 nn.Sigmoid()
               
                 
-            )
-        self.fc = nn.Sequential(
-
-            nn.Linear(ndf*4 + 1, ndf*2),
-            nn.LeakyReLU(0.2, inplace=True),
-
-            nn.Linear(ndf*2, 1),
-            nn.Sigmoid()
         )
-
        
               
     def forward(self, energy):
-        conv_out = self.main(energy)
-        fc_input = conv_out.view(-1, ndf*4 + 1)
-        return self.fc(fc_input)
+        return self.main(energy)
 
 def weights_init(m):
     classname = m.__class__.__name__
@@ -87,7 +76,5 @@ def weights_init(m):
     elif classname.find('BatchNorm') != -1:
         nn.init.normal_(m.weight.data, 1.0, 0.02)
         nn.init.constant_(m.bias.data, 0)
-    elif classname.find('Linear') != -1:
-        m.weight.data.normal_(0.0, 0.02)
-        m.bias.data.fill_(0)
+
     
