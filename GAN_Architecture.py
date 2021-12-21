@@ -64,10 +64,21 @@ class Discriminator(nn.Module):
               
                 
         )
-       
-              
+        self.fc = nn.Sequential(
+
+            nn.Linear(ndf*4 + 1, ndf*2),
+            nn.LeakyReLU(0.2, inplace=True),
+            
+            nn.Linear(ndf*2, ndf),
+            nn.LeakyReLU(0.2, inplace=True),
+            
+            nn.Linear(ndf, 1),
+            nn.Sigmoid()
+        )
     def forward(self, energy):
-        return self.main(energy)
+        conv_out = self.main(energy)
+        inp = torch.cat(conv_out,energy).view(-1,ndf*4 + 1)
+        return self.fc(conv_out)  
 
 def weights_init(m):
     classname = m.__class__.__name__
