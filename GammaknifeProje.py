@@ -143,7 +143,7 @@ class HDF5Dataset(Dataset):
     def __len__(self):
         return self.dataset_len
 #Gammaknife is the group name
-path = '/content/gdrive/MyDrive/Datas/Train2d_onlyentry.h5'#Train2d_onlyentry
+path = '/content/gdrive/MyDrive/Datas/Train3d_onlyentry.h5'#Train2d_onlyentry
 data = HDF5Dataset(path)
 dataloader = torch.utils.data.DataLoader(data, batch_size=batch_size,
                                          shuffle=True, num_workers=workers)
